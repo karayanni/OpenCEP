@@ -29,7 +29,7 @@ class Tree:
         )
         if pattern.condition is not None:
             self.__root.apply_formula(pattern.condition)  # puts formula in nodes
-        self.__root.create_storage_unit(leaf_index=None)  # root
+        self.__root.create_storage_units(leaf_index=None)  # root
         # self.__root.set_sorting_properties()
 
     def json_repr(self):

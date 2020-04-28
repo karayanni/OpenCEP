@@ -6,7 +6,7 @@ from base.PatternStructure import SeqOperator, QItem
 
 # from base.Event import Event #TODO
 from evaluation.temp_simple_modules import Event
-from evaluation.Storage import ArrayStorage
+from evaluation.Storage import Storage, SortedStorage
 
 
 class LeafNode(Node):
@@ -43,7 +43,7 @@ class LeafNode(Node):
 
     def create_storage_unit(self, leaf_index: int):
         # the key in the storage unit will be first_timestamp
-        self._partial_matches = ArrayStorage(array=[])
+        self._partial_matches = SortedStorage()
 
     def get_leaves(self):
         return [self]

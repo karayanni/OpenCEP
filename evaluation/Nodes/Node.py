@@ -4,7 +4,7 @@ from datetime import timedelta, datetime
 from base.Formula import TrueFormula, Formula
 from evaluation.PartialMatch import PartialMatch
 from misc.Utils import find_partial_match_by_timestamp
-from evaluation.Storage import Storage, ArrayStorage
+from evaluation.Storage import Storage
 
 
 class Node(ABC):
@@ -109,5 +109,11 @@ class Node(ABC):
     def get_event_definitions(self):
         """
         Returns the specifications of all events collected by this tree - to be implemented by subclasses.
+        """
+        raise NotImplementedError()
+
+    def create_storage_units(self, leaf_index=-1):
+        """
+        creates a storage container for the PMs, the container sorts the PMs according to the condition Formula - to be implemented by subclasses. 
         """
         raise NotImplementedError()
