@@ -27,9 +27,10 @@ class EvaluationMechanismParameters:
     """
     Parameters for the evaluation mechanism builder.
     """
-    def __init__(self, eval_mechanism_type: EvaluationMechanismTypes):
+    def __init__(self, eval_mechanism_type: EvaluationMechanismTypes, enable_sorted_storage = False, attributes_priorities = None):
         self.type = eval_mechanism_type
-
+        self.attributes_priorities = attributes_priorities
+        self.enable_sorted_storage = enable_sorted_storage
 
 class IterativeImprovementEvaluationMechanismParameters(EvaluationMechanismParameters):
     """

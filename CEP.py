@@ -36,7 +36,9 @@ class CEP:
         patterns: List[Pattern],
         eval_mechanism_type: EvaluationMechanismTypes = EvaluationMechanismTypes.TRIVIAL_LEFT_DEEP_TREE,
         eval_mechanism_params: EvaluationMechanismParameters = None,
-        performance_specs: PerformanceSpecifications = None,  # opt=True, prio_list:tuple=()
+        performance_specs: PerformanceSpecifications = None,
+        enable_sorted_storage = False,
+        attributes_priorities: dict = None,
     ):
         """
         Constructor of the class.
@@ -48,10 +50,12 @@ class CEP:
         self.__eval_mechanism = EvaluationMechanismFactory.build_single_pattern_eval_mechanism(
             eval_mechanism_type, eval_mechanism_params, patterns[0]
         )
-        # print(prettyjson(self.__eval_mechanism.json_repr()))
+
         self.__pattern_matches = None
         self.__performance_specs = performance_specs
-
+        self.__enable_sorted_storage = enable_sorted_storage
+        self.__attributes_priorities = attributes_priorities
+        
     def run(self, event_stream: Stream):
         """
         Applies the evaluation mechanism to detect the predefined patterns in a given stream of events.
