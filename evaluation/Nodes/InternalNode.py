@@ -10,7 +10,7 @@ from misc.Utils import (
     merge_according_to,
     is_sorted,
 )
-from evaluation.Storage import SortedStorage, UnsortedStorage
+from evaluation.Storage import SortedStorage, UnsortedStorage, TreeStorageParameters
 
 
 class InternalNode(Node):
@@ -194,15 +194,14 @@ class AndNode(InternalNode):
     # creates aa Storage unit with the key chosen by it's father and chooses the sorting_key for its children
     # if you are calling this function on root then sorting_key can be WHATEVER you want
     def create_storage_unit(
-        self, sorting_key: callable = None, relation_op=None, equation_side=None, sort_by_first_timestamp=False
+        self, storage_params: TreeStorageParameters, sorting_key: callable = None, relation_op=None, equation_side=None, sort_by_first_timestamp=False
     ):
-        """if ENABLE_SORTING == false:
+        if(storage_params is None or not storage_params.sorted_storage):
             self._partial_matches = UnsortedStorage()
-            self._left_subtree.create_storage_unit()
-            self._right_subtree.create_storage_unit()
-            return"""
+            self._left_subtree.create_storage_unit(storage_params)
+            self._right_subtree.create_storage_unit(storage_params)
+            return
 
-        # if sorting is enabled and sorting key is none why not sort by timestamp?
         if sorting_key is None:
             self._partial_matches = UnsortedStorage()
         else:
@@ -217,7 +216,10 @@ class AndNode(InternalNode):
         left_event_names = {item[1].name for item in left_event_defs}
         right_event_names = {item[1].name for item in right_event_defs}
 
-        simple_formula = self._condition.simplify_formula(left_event_names, right_event_names)
+        if(storage_params.attributes_priorities is not None):
+            simple_formula = self._condition.simplify_formula(left_event_names, right_event_names, storage_params.attributes_priorities)
+        else:
+            simple_formula = self._condition.simplify_formula(left_event_names, right_event_names)
 
         if simple_formula is not None:
             # left_term, relop, right_term = extract_from_formula(simple_formula)
@@ -265,7 +267,7 @@ class SeqNode(InternalNode):
         return super()._validate_new_match(events_for_new_match)  # validates conditons
 
     def create_storage_unit(
-        self, sorting_key: callable = None, relation_op=None, equation_side=None, sort_by_first_timestamp=False
+        self, storage_params: TreeStorageParameters, sorting_key: callable = None, relation_op=None, equation_side=None, sort_by_first_timestamp=False
     ):
         """
         This function creates the storage for partial_matches it gives a special key: callable
@@ -274,7 +276,12 @@ class SeqNode(InternalNode):
         We assume all events are in SEQ(,,,,...) which makes the order in partial match the same
         as in event_defs: [(1,a),(2,b)] in event_defs and [a,b] in pm.
         """
-        # this causes root not to order its items, should we keep root unsorted?
+        if(storage_params is None or not storage_params.sorted_storage):
+            self._partial_matches = UnsortedStorage()
+            self._left_subtree.create_storage_unit(storage_params)
+            self._right_subtree.create_storage_unit(storage_params)
+            return
+
         if sorting_key is None:
             self._partial_matches = UnsortedStorage()
         else:
