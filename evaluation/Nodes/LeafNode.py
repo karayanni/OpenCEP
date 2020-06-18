@@ -67,7 +67,7 @@ class LeafNode(Node):
     def create_storage_unit(
         self, storage_params: TreeStorageParameters, sorting_key: callable = None, relation_op=None, equation_side=None, sort_by_first_timestamp=False
     ):
-        if(storage_params is None or not storage_params.sorted_storage):
+        if storage_params is None or not storage_params.sort_storage:
             self._partial_matches = UnsortedStorage()
             return
 
